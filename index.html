@@ -69,7 +69,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Оновлені стилі для заголовка (додано можливість кліку та стрілочку) */
         .category-title {
             font-size: 1.3rem;
             margin-bottom: 20px;
@@ -87,7 +86,6 @@
             color: var(--primary-hover);
         }
 
-        /* Стрілочка */
         .category-title::after {
             content: '▼';
             font-size: 0.9rem;
@@ -95,7 +93,6 @@
             transition: transform 0.3s ease;
         }
 
-        /* Стилі для згорнутого стану */
         .category-card.collapsed .category-title {
             margin-bottom: 0;
             padding-bottom: 0;
@@ -103,15 +100,15 @@
         }
 
         .category-card.collapsed .category-title::after {
-            transform: rotate(-90deg); /* Повертаємо стрілочку вліво */
+            transform: rotate(-90deg);
         }
 
         .category-content {
-            display: block; /* За замовчуванням контент видно */
+            display: block; 
         }
 
         .category-card.collapsed .category-content {
-            display: none; /* Ховаємо контент при згортанні */
+            display: none; 
         }
 
         .block-section {
@@ -182,10 +179,11 @@
             gap: 15px;
             z-index: 100;
             border-top: 1px solid var(--border-color);
+            flex-wrap: wrap; /* Додано для перенесення кнопок */
         }
 
         .btn {
-            padding: 12px 28px;
+            padding: 12px 24px;
             font-size: 1rem;
             font-weight: 600;
             border: none;
@@ -216,6 +214,18 @@
 
         .btn-secondary:hover {
             background-color: #e2e8f0;
+        }
+
+        /* Стилі для кнопки Word */
+        .btn-word {
+            background-color: #2b579a;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(43, 87, 154, 0.2);
+        }
+
+        .btn-word:hover {
+            background-color: #1e3f6f;
+            transform: translateY(-1px);
         }
 
         #summary-view {
@@ -314,6 +324,7 @@
             .bottom-bar {
                 flex-direction: column;
                 padding: 12px 15px;
+                gap: 10px;
             }
             
             .btn {
@@ -322,7 +333,7 @@
             }
 
             body {
-                padding-bottom: 150px; 
+                padding-bottom: 200px; 
             }
 
             .summary-table {
@@ -357,7 +368,7 @@
     <div class="container" id="builder-view">
         <header>
             <h1>Конструктор програми тренінгу</h1>
-            <p class="description">Відмітьте необхідні блоки та теми для вашого заходу. Клікніть на назву категорії, щоб згорнути/розгорнути її. Після цього натисніть кнопку внизу екрану для формування готової програми.</p>
+            <p class="description">Відмітьте необхідні блоки та теми для вашого заходу. Клікніть на назву категорії, щоб розгорнути її. Після цього натисніть кнопку внизу екрану для формування готової програми.</p>
         </header>
 
         <div id="form-container">
@@ -374,16 +385,18 @@
     <div class="container" id="summary-view">
         <header class="no-print" style="margin-bottom: 20px; padding: 20px;">
             <h1 style="margin-bottom: 5px;">Готова програма</h1>
-            <p class="description">Перевірте сформовану таблицю перед друком або збереженням у PDF.</p>
+            <p class="description">Перевірте сформовану таблицю перед друком або збереженням.</p>
         </header>
 
         <div id="summary-content">
             <!-- Сюди буде вставлена таблиця -->
         </div>
 
+        <!-- Оновлена панель кнопок з Word -->
         <div class="bottom-bar no-print">
-            <button class="btn btn-secondary" onclick="editProgram()">← Повернутись до редагування</button>
-            <button class="btn btn-primary" onclick="window.print()">🖨️ Друкувати / Зберегти PDF</button>
+            <button class="btn btn-secondary" onclick="editProgram()">← Редагувати</button>
+            <button class="btn btn-word" onclick="downloadWord()">📄 Завантажити Word</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Друк / PDF</button>
         </div>
     </div>
 
@@ -396,7 +409,7 @@
     </div>
 
     <script>
-        // База даних програми
+        // База даних програми (ВЖЕ З НОВИМ НАПОВНЕННЯМ)
         const trainingData = [
             {
                 category: "Дії населення під час надзвичайної ситуації воєнного характеру",
@@ -575,21 +588,17 @@
             trainingData.forEach((cat, catIndex) => {
                 const catCard = document.createElement('div');
                 catCard.className = 'category-card collapsed';
-                // Якщо хочете, щоб при завантаженні категорії були згорнуті, замініть попередній рядок на:
-                // catCard.className = 'category-card collapsed';
                 
                 const catTitle = document.createElement('h2');
                 catTitle.className = 'category-title';
                 catTitle.textContent = cat.category;
                 
-                // Додаємо подію кліку для розгортання/згортання
                 catTitle.addEventListener('click', () => {
                     catCard.classList.toggle('collapsed');
                 });
 
                 catCard.appendChild(catTitle);
 
-                // Створюємо окремий контейнер для блоків (щоб його можна було сховати)
                 const catContent = document.createElement('div');
                 catContent.className = 'category-content';
 
@@ -631,7 +640,6 @@
                     catContent.appendChild(blockSection);
                 });
 
-                // Додаємо контент у картку
                 catCard.appendChild(catContent);
                 container.appendChild(catCard);
             });
@@ -755,6 +763,45 @@
             window.scrollTo(0, 0);
         }
 
+        // ФУНКЦІЯ: Експорт у Word (.doc)
+        function downloadWord() {
+            const summaryContainer = document.getElementById('summary-content');
+            if (!summaryContainer || summaryContainer.innerHTML.trim() === '') return;
+
+            const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+                "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+                "xmlns='http://www.w3.org/TR/REC-html40'>" +
+                "<head><meta charset='utf-8'><title>Програма тренінгу</title>" +
+                "<style>" +
+                "table { border-collapse: collapse; width: 100%; font-family: 'Segoe UI', Arial, sans-serif; }" +
+                "th, td { border: 1pt solid black; padding: 6pt; text-align: left; vertical-align: top; }" +
+                "th { background-color: #f2f2f2; font-weight: bold; text-align: left; }" +
+                ".summary-category-row { background-color: #e6e6e6; font-weight: bold; text-align: center; }" +
+                "ul { margin: 0; padding-left: 15pt; }" +
+                "li { margin-bottom: 3pt; }" +
+                "</style></head><body>";
+                
+            const title = "<h2 style='text-align: center; font-family: Arial, sans-serif; color: #333;'>Сформована програма тренінгу</h2><br>";
+            const footer = "</body></html>";
+            
+            const sourceHTML = header + title + summaryContainer.innerHTML + footer;
+
+            const blob = new Blob(['\ufeff', sourceHTML], {
+                type: 'application/msword'
+            });
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Programa_treningu.doc'; 
+            
+            document.body.appendChild(link);
+            link.click();
+            
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
         function editProgram() {
             document.getElementById('summary-view').style.display = 'none';
             document.getElementById('builder-view').style.display = 'block';
@@ -765,10 +812,8 @@
             document.getElementById('alert-modal').style.display = 'none';
         }
 
-        // Надійний запуск скрипта
         document.addEventListener('DOMContentLoaded', renderBuilder);
         
-        // Дублюючий виклик для специфічних браузерів
         if (document.getElementById('form-container') && document.getElementById('form-container').innerHTML === '') {
             renderBuilder();
         }
