@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор програми тренінгу</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 90px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        p.description {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .category-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--primary-color);
+        }
+
+        .block-section {
+            margin-bottom: 25px;
+            padding-left: 5px;
+        }
+
+        .block-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .block-header {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            background: #f1f5f9;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .block-header:hover {
+            background: #e2e8f0;
+        }
+
+        .topic-list {
+            list-style: none;
+            padding-left: 35px;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        label {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            padding: 15px 20px;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 100;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #334155;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+
+        #summary-view {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            font-size: 1rem;
+        }
+
+        .summary-table th, .summary-table td {
+            border: 1px solid #cbd5e1;
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .summary-table th {
+            background-color: #f8fafc;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .summary-category-row {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            text-align: center !important;
+            color: var(--text-main);
+        }
+
+        .summary-topics-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .summary-topics-list li {
+            margin-bottom: 4px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            color: #ef4444;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .bottom-bar, .no-print {
+                display: none !important;
+            }
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+            #summary-view {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+            @page {
+                margin: 1.5cm;
+            }
+        }
+
+        /* --- АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ ПРИСТРОЇВ --- */
+        @media (max-width: 600px) {
+            /* Дозволяємо кнопкам ставати одна під одною */
+            .bottom-bar {
+                flex-direction: column;
+                padding: 12px 15px;
+            }
+            
+            /* Кнопки розтягуються на всю ширину екрана */
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* Збільшуємо відступ знизу, щоб висока панель кнопок не перекривала контент */
+            body {
+                padding-bottom: 150px; 
+            }
+
+            /* 1. Суворо фіксуємо таблицю в межах 100% ширини екрана */
+            .summary-table {
+                table-layout: fixed;
+                width: 100%;
+            }
+
+            /* 2. Дозволяємо тексту переноситися та зменшуємо відступи комірок */
+            .summary-table th, 
+            .summary-table td {
+                padding: 8px 4px; /* Робимо відступи мінімальними, щоб дати місце тексту */
+                word-wrap: break-word; /* Змушуємо довгі слова переноситися */
+                hyphens: auto; /* Додаємо автоматичні переноси слів */
+                font-size: 0.85rem; /* Трохи зменшуємо шрифт для кращої читабельності */
+            }
+
+            /* 3. Змінюємо ширину колонок для мобільних (перевизначаємо 8%, 32%, 60%) */
+            /* № з/п потребує трохи більше місця через зменшені відсотки на мобільному */
+            .summary-table th:nth-child(1) { width: 12%; } 
+            .summary-table th:nth-child(2) { width: 33%; } 
+            .summary-table th:nth-child(3) { width: 55%; } 
+
+            /* 4. Зменшуємо відступ маркерів списку зліва */
+            .summary-topics-list {
+                padding-left: 12px;
+            }
+
+            /* 5. Відступи для контейнера на мобільних */
+            #summary-view {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="builder-view">
+        <header>
+            <h1>Конструктор програми тренінгу</h1>
+            <p class="description">Відмітьте необхідні блоки та теми для вашого заходу. Після цього натисніть кнопку внизу екрану для формування готової програми.</p>
+        </header>
+
+        <div id="form-container">
+            <!-- Сюди динамічно додаватимуться теми -->
+        </div>
+
+        <div class="bottom-bar">
+            <button class="btn btn-primary" onclick="generateProgram()">
+                Сформувати програму
+            </button>
+        </div>
+    </div>
+
+    <div class="container" id="summary-view">
+        <header class="no-print" style="margin-bottom: 20px; padding: 20px;">
+            <h1 style="margin-bottom: 5px;">Готова програма</h1>
+            <p class="description">Перевірте сформовану таблицю перед друком або збереженням у PDF.</p>
+        </header>
+
+        <div id="summary-content">
+            <!-- Сюди буде вставлена таблиця -->
+        </div>
+
+        <div class="bottom-bar no-print">
+            <button class="btn btn-secondary" onclick="editProgram()">← Повернутись до редагування</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Друкувати / Зберегти як PDF</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="alert-modal">
+        <div class="modal-content">
+            <h3>Увага</h3>
+            <p style="margin-bottom: 20px;">Будь ласка, виберіть хоча б одну тему для формування програми тренінгу.</p>
+            <button class="btn btn-primary" style="margin: 0 auto;" onclick="closeModal()">Зрозуміло</button>
+        </div>
+    </div>
+
+    <script>
+        // База даних програми (можна легко редагувати та доповнювати)
+        const trainingData = [
+            {
+                category: "Дії населення під час надзвичайної ситуації воєнного характеру",
+                blocks: [
+                    {
+                        name: "Оцінка ризиків та ідентифікація загроз.",
+                        topics: [
+                            "Типологія сучасних загроз та їхня фізика;",
+                            "Вибухонебезпечні предмети. Міфи про “не чіпай – не чіпатиме”;",
+                            "Повітряна тривога. Типи тривог;",
+                            "Динамічні загрози. Тендеції ескалації. Статистика втрат;",
+                            "Відкриті системи моніторингу небезпек та їх особливості;",
+                            "Аудит безпеки: евакуаційні шляхи; - укриття; - системи оповіщення; -слабкі місця;"
+                        ]
+                    },
+                    {
+                        name: "Дії населення під час оголошення повітряної тривоги.",
+                        topics: [
+                            "Правила поведінки в умовах повітряної тривоги;",
+                            "Укриття. Специфіка укриттів. Як облаштувати укриття;",
+                            "Алгоритм дій в приміщенні, на вулиці, в авто;",
+                            "Підготовка до евакуації. Тривожна валіза та її вміст;",
+                        ]
+                    },
+                    {
+                        name: "Базова безпека, алгоритми реагування на загрози",
+                        topics: [
+                            "Архітектура виживання та правило \"двох стін\";",
+                            "Засоби індивідуального захисту;",
+                            "Порядок дій при виникненні НС;",
+                            "Стандартна евакуація;",
+                            "Евакуація в диму;",
+                            "Евакуація в умовах руйнування або часткового руйнування конструкцій;",
+                            "Загрози при інцидентах військового характеру;",
+                            "Поведінка під час обстрілу. Алгоритм дій в приміщенні, на вулиці, в авто;",
+                            "Принцип виклику екстрених служб;" 
+                        ]
+                    },
+                    {
+                        name: "Управління НС. Ланка першого реагування (за наявності сформованих команд реагування)",
+                        topics: [
+                            "Чіткий алгоритм дій: від виявлення загрози до старту евакуації. Оцінка ризиків та безпечна організація процесу;",
+                            "Активація команди  та матриця розподілу ролей;",
+                            "Технічні можливості щодо евакуації та оповіщення;",
+                            "Комунікація;",
+                            "Протокол “Огляд та зачищення”;",
+                            "Маркування перевірених зон;",
+                            "Перенесення, транспортування та екстрена евакуація потерпілого.",
+                            "Взаємодія з ДСНС;",
+                            "Управління точкою збору;"
+                        ]
+                    },
+                    {
+                        name: "Евакуація неможлива. Дії під завалами",
+                        topics: [
+                            "Сценарії обстрілів (реальні кейси); - помилки; - алгоритми рішень;",
+                            "Евакуація неможлива (вихід заблокований);",
+                            "Безпечна поведінка та фізична безпека;",
+                            "Збереження ресурсів та управління простором",
+                            "Дії до прибуття спеціалізованих служб;",
+                            "Профілактика краш-синдрому;",
+                            "Протоколи комунікації з рятувальниками;",
+                            "Взаємодія з іншими потерпілими."
+                        ]
+                    },
+                    {
+                        name: "Психологічна стійкість",
+                        topics: [
+                            "Анатомія страху",
+                            "Протокол первинної самооцінки;",
+                            "Психологічна самодопомога в перші хвилини;",
+                            "Практики зниження тривожності. Психологічна саморегуляція;"
+                        ]
+                    },
+                ]
+            },
+            {
+                category: "Практичні та симуляційні відпрацювання",
+                blocks: [
+                    {
+                        name: "Пожежна безпека",
+                        topics: [
+                            "Практичне відпрацювання гасіння порошковим вогнегасником;",
+                            "Практичне відпрацювання гасіння вуглекислотним вогнегасником;",
+                            "Практичне відпрацювання гасіння пожежний кран комплект;",
+                            "Пожежі в автомобілях. Гасіння (візуалізація)"
+                        ]
+                    },
+                    {
+                        name: "Евакуація",
+                        topics: [
+                            "Практичне відпрацювання евакуації в задимленні (театральний дим);",
+                            "Практичне відпрацювання евакуації в умовах обмеженої видимості (маски);",
+                            "Запуск системи оповіщення та практичне відпрацювання евакуації до місця збору;",
+                            "Перенесення, транспортування та екстрена евакуація потерпілого."
+                        ]
+                    },
+                    {
+                        name: "Медіа-зона",
+                        topics: [
+                            "“Стихія під контролем” - з вогнем в руці;",
+                            "“У повному озброєнні” - відчуй себе рятувальником (повне екіпірування);",
+                            "“Крізь димову завісу” - на фоні евакуаційного покажчика при виході з задимленого приміщення;"
+                            //"“Головне без паніки!”;",
+                        ]
+                    },
+                ]
+            },
+        ];
+
+        function renderBuilder() {
+            const container = document.getElementById('form-container');
+            container.innerHTML = '';
+
+            trainingData.forEach((cat, catIndex) => {
+                const catCard = document.createElement('div');
+                catCard.className = 'category-card';
+                
+                const catTitle = document.createElement('h2');
+                catTitle.className = 'category-title';
+                catTitle.textContent = cat.category;
+                catCard.appendChild(catTitle);
+
+                cat.blocks.forEach((block, blockIndex) => {
+                    const blockSection = document.createElement('div');
+                    blockSection.className = 'block-section';
+
+                    // Заголовок блоку з чекбоксом "Вибрати все"
+                    const blockHeader = document.createElement('div');
+                    blockHeader.className = 'block-header';
+                    const selectAllId = `select-all-${catIndex}-${blockIndex}`;
+                    
+                    blockHeader.innerHTML = `
+                        <label for="${selectAllId}">
+                            <input type="checkbox" id="${selectAllId}" class="select-all-cb" data-cat="${catIndex}" data-block="${blockIndex}">
+                            ${block.name}
+                        </label>
+                    `;
+                    blockSection.appendChild(blockHeader);
+
+                    // Список тем
+                    const topicList = document.createElement('ul');
+                    topicList.className = 'topic-list';
+
+                    block.topics.forEach((topic, topicIndex) => {
+                        const topicItem = document.createElement('li');
+                        topicItem.className = 'topic-item';
+                        const topicId = `topic-${catIndex}-${blockIndex}-${topicIndex}`;
+                        
+                        topicItem.innerHTML = `
+                            <label for="${topicId}">
+                                <input type="checkbox" id="${topicId}" class="topic-cb cat-${catIndex}-block-${blockIndex}" 
+                                       value="${topic}" data-cat="${catIndex}" data-block="${blockIndex}" data-topic="${topicIndex}">
+                                <span>${topic}</span>
+                            </label>
+                        `;
+                        topicList.appendChild(topicItem);
+                    });
+
+                    blockSection.appendChild(topicList);
+                    catCard.appendChild(blockSection);
+                });
+
+                container.appendChild(catCard);
+            });
+
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Клік по "Вибрати все в блоці"
+            const selectAllCbs = document.querySelectorAll('.select-all-cb');
+            selectAllCbs.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const cat = this.getAttribute('data-cat');
+                    const block = this.getAttribute('data-block');
+                    const childCbs = document.querySelectorAll(`.cat-${cat}-block-${block}`);
+                    
+                    childCbs.forEach(child => {
+                        child.checked = this.checked;
+                    });
+                });
+            });
+
+            // Оновлення стану "Вибрати все", якщо клікають на окремі теми
+            const topicCbs = document.querySelectorAll('.topic-cb');
+            topicCbs.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const cat = this.getAttribute('data-cat');
+                    const block = this.getAttribute('data-block');
+                    
+                    const allChildCbs = document.querySelectorAll(`.cat-${cat}-block-${block}`);
+                    const checkedChildCbs = document.querySelectorAll(`.cat-${cat}-block-${block}:checked`);
+                    const selectAllCb = document.getElementById(`select-all-${cat}-${block}`);
+
+                    if (checkedChildCbs.length === 0) {
+                        selectAllCb.checked = false;
+                        selectAllCb.indeterminate = false;
+                    } else if (checkedChildCbs.length === allChildCbs.length) {
+                        selectAllCb.checked = true;
+                        selectAllCb.indeterminate = false;
+                    } else {
+                        selectAllCb.checked = false;
+                        selectAllCb.indeterminate = true; // Візуальний стан часткового вибору
+                    }
+                });
+            });
+        }
+
+        function generateProgram() {
+            const summaryContainer = document.getElementById('summary-content');
+            let tableHTML = `
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th width="8%">№ з/п</th>
+                            <th width="32%">Назва блоку</th>
+                            <th width="60%">Опис</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            let hasSelection = false;
+
+            trainingData.forEach((cat, catIndex) => {
+                let categoryHTML = '';
+                let blockCounter = 1;
+                let hasCatSelection = false;
+
+                cat.blocks.forEach((block, blockIndex) => {
+                    const selectedTopics = [];
+                    block.topics.forEach((topic, topicIndex) => {
+                        const cb = document.getElementById(`topic-${catIndex}-${blockIndex}-${topicIndex}`);
+                        if (cb && cb.checked) {
+                            selectedTopics.push(topic);
+                        }
+                    });
+
+                    // Якщо в блоці є вибрані теми, формуємо рядок таблиці
+                    if (selectedTopics.length > 0) {
+                        hasCatSelection = true;
+                        hasSelection = true;
+                        
+                        let topicsListHTML = '<ul class="summary-topics-list">';
+                        selectedTopics.forEach(t => {
+                            topicsListHTML += `<li>${t}</li>`;
+                        });
+                        topicsListHTML += '</ul>';
+
+                        categoryHTML += `
+                            <tr>
+                                <td style="text-align: center; font-weight: bold;">${blockCounter}</td>
+                                <td>${block.name}</td>
+                                <td>${topicsListHTML}</td>
+                            </tr>
+                        `;
+                        blockCounter++;
+                    }
+                });
+
+                // Якщо вибрано хоча б щось з категорії, додаємо рядок з назвою категорії
+                if (hasCatSelection) {
+                    tableHTML += `
+                        <tr>
+                            <td colspan="3" class="summary-category-row">${cat.category}</td>
+                        </tr>
+                        ${categoryHTML}
+                    `;
+                }
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            if (!hasSelection) {
+                document.getElementById('alert-modal').style.display = 'flex';
+                return;
+            }
+
+            summaryContainer.innerHTML = tableHTML;
+            
+            // Перемикаємо видимість екранів
+            document.getElementById('builder-view').style.display = 'none';
+            document.getElementById('summary-view').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function editProgram() {
+            document.getElementById('summary-view').style.display = 'none';
+            document.getElementById('builder-view').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function closeModal() {
+            document.getElementById('alert-modal').style.display = 'none';
+        }
+
+        // Запуск при завантаженні сторінки
+        document.addEventListener('DOMContentLoaded', renderBuilder);
+        
+        // Дублюючий прямий виклик на випадок, якщо DOMContentLoaded вже спрацював (специфіка месенджерів)
+        if (document.getElementById('form-container').innerHTML === '') {
+            renderBuilder();
+        }
+    </script>
+</body>
+</html>
